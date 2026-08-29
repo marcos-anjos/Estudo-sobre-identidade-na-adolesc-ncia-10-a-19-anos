@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quem sou eu? — Adolescência, Identidade e Transformações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0c0c0b;
+    --bg-raise: #141412;
+    --fg: #f3f2ee;
+    --fg-dim: #8a897f;
+    --hair: rgba(243,242,238,0.14);
+    --hair-soft: rgba(243,242,238,0.07);
+
+    --c1: #9fb39a;
+    --c2: #d8ab52;
+    --c3: #6ea3ac;
+    --c4: #c07a90;
+
+    --accent: var(--fg);
+    --ease: cubic-bezier(.16,.84,.44,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ background:var(--bg); }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Archivo',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    cursor: default;
+  }
+
+  ::selection{ background:var(--fg); color:var(--bg); }
+
+  a{ color:inherit; text-decoration:none; }
+
+  /* ============ CUSTOM CURSOR (desktop only) ============ */
+  .cursor-dot{
+    position:fixed; top:0; left:0;
+    width:14px; height:14px;
+    border:1px solid var(--fg);
+    border-radius:50%;
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    z-index:999;
+    mix-blend-mode:difference;
+    transition: width .25s var(--ease), height .25s var(--ease), background .25s var(--ease);
+    display:none;
+  }
+  .cursor-dot.hover{ width:44px; height:44px; background:var(--fg); }
+  @media (pointer:fine){ .cursor-dot{ display:block; } }
+
+  /* ============ PROGRESS LINE ============ */
+  .progress-line{
+    position:fixed; top:0; left:0; height:2px;
+    background:var(--fg);
+    width:0%;
+    z-index:200;
+    transition: width .08s linear;
+  }
+
+  /* ============ TOP NAV ============ */
+  .topnav{
+    position:fixed; top:0; left:0; right:0;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 1.5rem clamp(1.2rem,4vw,3rem) 0;
+    z-index:150;
+    mix-blend-mode:difference;
+    pointer-events:none;
+  }
+  .topnav *{ pointer-events:auto; }
+  .brand{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+  }
+  .nav-dots{ display:flex; gap:1.1rem; align-items:center; }
+  .nav-dot{
+    width:6px; height:6px; border-radius:50%;
+    background:rgba(243,242,238,0.35);
+    border:none; padding:0; cursor:pointer;
+    transition: background .3s var(--ease), transform .3s var(--ease);
+    position:relative;
+  }
+  .nav-dot.active{ background:var(--fg); transform:scale(1.6); }
+  .nav-dot::after{
+    content: attr(data-label);
+    position:absolute; top:1.4rem; right:0;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.6rem;
+    letter-spacing:0.06em;
+    white-space:nowrap;
+    color:var(--fg);
+    opacity:0;
+    transition: opacity .25s var(--ease);
+  }
+  .nav-dot:hover::after{ opacity:0.7; }
+
+  /* ============ HERO — kinetic intro ============ */
+  .hero{
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding: 0 clamp(1.2rem,5vw,3.4rem);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+    margin-bottom:1.6rem;
+    opacity:0;
+    animation: fadeUp .8s var(--ease) 0.15s forwards;
+  }
+  .kinetic{
+    font-weight:300;
+    font-size:clamp(2.4rem, 8.6vw, 6.4rem);
+    line-height:0.98;
+    letter-spacing:-0.02em;
+    text-transform:lowercase;
+    max-width:16ch;
+  }
+  .kinetic .word{
+    display:inline-block;
+    opacity:0;
+    filter: blur(6px);
+    transform: translateY(0.4em);
+    animation: wordIn .9s var(--ease) forwards;
+  }
+  .kinetic em{ font-style:italic; font-weight:300; color:var(--fg-dim); }
+  @keyframes wordIn{ to{ opacity:1; filter:blur(0); transform:translateY(0); } }
+  @keyframes fadeUp{ to{ opacity:1; } }
+
+  .hero-foot{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    margin-top: 3.2rem;
+    padding-top:1.4rem;
+    border-top:1px solid var(--hair);
+    opacity:0;
+    animation: fadeUp .9s var(--ease) 1.6s forwards;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+  .hero-note{
+    font-size:0.92rem;
+    line-height:1.6;
+    color:var(--fg-dim);
+    max-width:38ch;
+  }
+  .scroll-cue{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+    display:flex; align-items:center; gap:0.6rem;
+    flex-shrink:0;
+  }
+  .scroll-cue .bar{
+    width:1px; height:26px;
+    background: var(--fg-dim);
+    position:relative;
+    overflow:hidden;
+  }
+  .scroll-cue .bar::after{
+    content:"";
+    position:absolute; top:-100%; left:0; width:100%; height:100%;
+    background:var(--fg);
+    animation: scrollBar 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollBar{ 0%{ top:-100%; } 60%{ top:100%; } 100%{ top:100%; } }
+
+  /* ============ MARQUEE ============ */
+  .marquee{
+    border-top:1px solid var(--hair);
+    border-bottom:1px solid var(--hair);
+    overflow:hidden;
+    padding: 0.9rem 0;
+    white-space:nowrap;
+  }
+  .marquee-track{
+    display:inline-flex;
+    animation: marquee 34s linear infinite;
+  }
+  .marquee-track span{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.78rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+    padding: 0 1.4rem;
+    display:inline-flex; align-items:center; gap:1.4rem;
+  }
+  .marquee-track span::after{ content:"—"; color:var(--hair); }
+  @keyframes marquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  /* ============ PHASE SECTIONS ============ */
+  .phase{
+    position:relative;
+    padding: clamp(4.5rem,10vh,7rem) clamp(1.2rem,5vw,3.4rem);
+    border-bottom:1px solid var(--hair);
+    overflow:hidden;
+  }
+  .phase-inner{
+    max-width:1240px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: 0.62fr 0.92fr 1.3fr;
+    grid-template-areas: "meta image main";
+    gap: clamp(1.6rem,3.4vw,3rem);
+    position:relative;
+    z-index:2;
+    align-items:start;
+  }
+  @media (max-width:1024px){
+    .phase-inner{ grid-template-columns: 0.75fr 1.25fr; grid-template-areas: "meta image" "main main"; }
+  }
+  @media (max-width:680px){
+    .phase-inner{ grid-template-columns:1fr; grid-template-areas: "meta" "image" "main"; }
+  }
+
+  .phase-meta{ grid-area:meta; display:flex; flex-direction:column; gap:1.6rem; }
+  .phase-figure{ grid-area:image; margin:0; }
+  .phase-main{ grid-area:main; }
+
+  .phase-image{
+    position:relative;
+    aspect-ratio: 3 / 4;
+    overflow:hidden;
+    background:var(--bg-raise);
+  }
+  .phase-image img{
+    width:100%; height:100%; object-fit:cover;
+    display:block;
+    filter: grayscale(1) contrast(1.06) brightness(0.96);
+    transform: scale(1.03);
+    transition: filter 1s var(--ease), transform 1.4s var(--ease);
+  }
+  .phase:hover .phase-image img, .phase-image:hover img{
+    filter: grayscale(0.1) contrast(1.03) brightness(1);
+    transform: scale(1.09);
+  }
+  .phase-image::after{
+    content:"";
+    position:absolute; inset:0;
+    box-shadow: inset 0 0 0 1px var(--hair);
+    pointer-events:none;
+  }
+  .phase-caption{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.66rem;
+    letter-spacing:0.03em;
+    color:var(--fg-dim);
+    line-height:1.5;
+    margin-top:0.7rem;
+    padding-right:1rem;
+  }
+  .phase-caption b{ color:var(--fg-dim); font-weight:500; }
+
+  .phase-giant{
+    position:absolute;
+    top:50%; right:clamp(1rem,4vw,3rem);
+    transform:translateY(-50%);
+    font-size:clamp(9rem, 26vw, 20rem);
+    font-weight:700;
+    line-height:1;
+    color: var(--phase-accent, var(--fg));
+    opacity:0.05;
+    letter-spacing:-0.04em;
+    z-index:1;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .reveal{
+    opacity:0;
+    transform: translateY(28px);
+    transition: opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  .phase-index{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    color: var(--phase-accent, var(--fg-dim));
+    display:flex; align-items:center; gap:0.6rem;
+  }
+  .phase-index .ln{ width:20px; height:1px; background:var(--phase-accent, var(--fg-dim)); display:inline-block; }
+
+  .phase-age{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.92rem;
+    color:var(--fg-dim);
+  }
+
+  .phase-domains{
+    font-size:0.82rem;
+    line-height:1.9;
+    color:var(--fg-dim);
+  }
+  .phase-domains b{ color:var(--fg); font-weight:400; border-bottom:1px solid var(--hair); }
+
+  .phase-main h2{
+    font-weight:300;
+    font-size:clamp(2rem, 4vw, 3.2rem);
+    line-height:1.02;
+    letter-spacing:-0.01em;
+    margin:0 0 0.4rem;
+    text-transform:lowercase;
+  }
+  .phase-medium{
+    font-style:italic;
+    font-weight:300;
+    color:var(--phase-accent, var(--fg-dim));
+    font-size:1.05rem;
+    margin: 0 0 1.6rem;
+  }
+  .phase-lede{
+    font-size:1.02rem;
+    line-height:1.75;
+    color:#d7d5cc;
+    max-width:60ch;
+    margin:0 0 2.2rem;
+  }
+
+  .marco{
+    border-left:1px solid var(--phase-accent, var(--fg));
+    padding-left:1.1rem;
+    max-width:56ch;
+  }
+  .marco-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.64rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--phase-accent, var(--fg-dim));
+    display:block;
+    margin-bottom:0.5rem;
+  }
+  .marco p{ margin:0; font-size:0.88rem; line-height:1.65; color:var(--fg-dim); }
+
+  /* ============ FOOTER ============ */
+  footer{
+    padding: 3rem clamp(1.2rem,5vw,3.4rem) 4rem;
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem;
+  }
+  footer .fnote{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.05em;
+    color:var(--fg-dim);
+    text-transform:uppercase;
+  }
+  .back-top{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--fg);
+    border-bottom:1px solid var(--hair);
+    padding-bottom:2px;
+    cursor:pointer;
+    background:none; border-top:none; border-left:none; border-right:none;
+  }
+  .back-top:hover{ border-color:var(--fg); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+    .kinetic .word{ opacity:1; filter:none; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="progress-line" id="progressLine"></div>
+
+<nav class="topnav">
+  <span class="brand">Quem&nbsp;sou&nbsp;eu?&nbsp;/&nbsp;Identidade</span>
+  <div class="nav-dots" id="navDots"></div>
+</nav>
+
+<section class="hero">
+  <p class="hero-eyebrow">Estudo sobre identidade na adolescência — 10 a 19 anos</p>
+  <h1 class="kinetic" id="kineticText"></h1>
+  <div class="hero-foot">
+    <p class="hero-note">Quatro faces de uma mesma pergunta — do corpo que muda ao lugar que se conquista entre os outros. Organizado para consulta rápida por psicólogos e educadores.</p>
+    <span class="scroll-cue"><span class="bar"></span>rolar</span>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<main id="phasesContainer"></main>
+
+<footer>
+  <span class="fnote">Uso clínico &amp; educacional — identidade na adolescência, 10–19 anos</span>
+  <button class="back-top" id="backTop">Voltar ao início ↑</button>
+</footer>
+
+<script>
+const PHASES = [
+  {
+    idx: "01", short:"1ª",
+    range: "10 – 14 anos",
+    name: "o corpo que muda",
+    accent: "var(--c1)",
+    medium: "puberdade & a relação com a própria imagem",
+    domains: ["Puberdade","Sensações novas","Autopercepção","Ritmo próprio"],
+    lede: "O corpo muda antes que a identidade acompanhe. Mudanças hormonais, de proporção e de ritmo de crescimento chegam de forma desigual entre os colegas, e cada adolescente compara seu próprio relógio biológico ao dos demais. Antes de qualquer elaboração psíquica, é o corpo que anuncia que a infância está ficando para trás.",
+    marco: "Comparações constantes com o próprio corpo ou com o dos colegas fazem parte do processo, mas autocrítica persistente sobre a aparência é um sinal para escutar com mais atenção, sem minimizar como 'coisa da idade'.",
+    img: "https://images.unsplash.com/photo-1616386415069-85bf49e70725?auto=format&fit=crop&w=1000&q=80",
+    imgAlt: "Silhueta de uma pessoa em contraluz junto a uma janela",
+    credit: "pablo zavala / Unsplash"
+  },
+  {
+    idx: "02", short:"2ª",
+    range: "12 – 15 anos",
+    name: "o pensamento que questiona",
+    accent: "var(--c2)",
+    medium: "pensamento abstrato & os primeiros porquês",
+    domains: ["Pensamento abstrato","Valores","Questionamento","Pensamento hipotético"],
+    lede: "Um novo tipo de pensamento aparece: hipotético, abstrato, capaz de imaginar o que ainda não existe e de comparar o mundo como é com o mundo como poderia ser. É esse pensamento que permite questionar regras, discutir valores da própria família e testar ideias — inclusive de forma idealista e absoluta.",
+    marco: "O julgamento em preto e branco típico dessa fase costuma amadurecer com o tempo. Rigidez excessiva, isolamento nas próprias convicções ou recusa completa ao diálogo merecem espaço de escuta, não confronto direto.",
+    img: "https://images.unsplash.com/photo-1700553440311-fe1e0cb8d6ee?auto=format&fit=crop&w=1000&q=80",
+    imgAlt: "Pessoa sentada no chão de uma biblioteca, lendo um livro",
+    credit: "Declan Sun / Unsplash"
+  },
+  {
+    idx: "03", short:"3ª",
+    range: "13 – 16 anos",
+    name: "quem sou entre os outros",
+    accent: "var(--c3)",
+    medium: "grupo de pares & comparação social",
+    domains: ["Pertencimento","Grupo de pares","Comparação social","Aceitação"],
+    lede: "O grupo de pares se torna um espelho tão ou mais importante que a família para responder à pergunta 'quem sou eu'. Pertencer, ser aceito, encontrar um lugar entre iguais — tudo isso ajuda a testar identidades possíveis antes de se decidir por uma. É social antes de ser individual.",
+    marco: "Mudanças bruscas de grupo social, exclusão persistente ou isolamento repentino têm peso maior nessa fase do que costuma parecer — vale investigar tanto o que está acontecendo no grupo quanto como o adolescente está se percebendo nele.",
+    img: "https://images.unsplash.com/photo-1549057446-9f5c6ac91a04?auto=format&fit=crop&w=1000&q=80",
+    imgAlt: "Grupo de amigos caminhando e conversando lado a lado",
+    credit: "Eliott Reyna / Unsplash"
+  },
+  {
+    idx: "04", short:"4ª",
+    range: "15 – 19 anos",
+    name: "a autonomia que se conquista",
+    accent: "var(--c4)",
+    medium: "separação emocional & identidade consolidada",
+    domains: ["Autonomia emocional","Separação","Projeto de vida","Identidade consolidada"],
+    lede: "Aos poucos, a identidade deixa de depender tanto da aprovação alheia e passa a se apoiar em valores e projetos próprios. É o momento de separação emocional dos pais — não um afastamento definitivo, mas a construção de um espaço interno que já não pede permissão para existir.",
+    marco: "Oscilações de humor e necessidade de privacidade fazem parte do processo, mas retraimento persistente, queda abrupta de funcionamento ou desligamento total dos vínculos pedem escuta mais próxima, não apenas 'é da idade'.",
+    img: "https://images.unsplash.com/photo-1742558315942-2ec9570b9782?auto=format&fit=crop&w=1000&q=80",
+    imgAlt: "Adolescente observando pensativamente pela janela de um trem",
+    img: "https://images.unsplash.com/photo-1742558315942-2ec9570b9782?auto=format&fit=crop&w=1000&q=80",
+    imgAlt: "Adolescente observando pensativamente pela janela",
+    credit: "Ruth Leong / Unsplash"
+  }
+];
+
+/* ---- kinetic hero text ---- */
+const words = ["entre","quem","eu","era","e","quem","ainda","serei","—","a", "identidade", "em", "obras"];
+const kinetic = document.getElementById('kineticText');
+words.forEach((w, i) => {
+  const span = document.createElement('span');
+  span.className = 'word';
+  span.style.animationDelay = (0.35 + i * 0.075) + 's';
+  span.textContent = w + (i < words.length - 1 ? '\u00A0' : '');
+  if(w === 'obras'){ span.style.fontStyle='italic'; span.style.color='var(--fg-dim)'; }
+  kinetic.appendChild(span);
+});
+
+/* ---- marquee content ---- */
+const marqueeWords = PHASES.flatMap(p => p.domains).concat(PHASES.map(p=>p.range));
+const marqueeTrack = document.getElementById('marqueeTrack');
+[0,1].forEach(() => {
+  marqueeWords.forEach(w => {
+    const span = document.createElement('span');
+    span.textContent = w;
+    marqueeTrack.appendChild(span);
+  });
+});
+
+/* ---- build phase sections ---- */
+const container = document.getElementById('phasesContainer');
+const navDots = document.getElementById('navDots');
+
+PHASES.forEach((p, i) => {
+  const section = document.createElement('section');
+  section.className = 'phase';
+  section.id = `phase-${i}`;
+  section.style.setProperty('--phase-accent', p.accent);
+  section.innerHTML = `
+    <span class="phase-giant">${p.idx}</span>
+    <div class="phase-inner">
+      <div class="phase-meta">
+        <div class="phase-index reveal"><span class="ln"></span>${p.idx} / 04</div>
+        <div class="phase-age reveal">${p.range}</div>
+        <div class="phase-domains reveal">${p.domains.map(d=>`<b>${d}</b>`).join(' &nbsp; ')}</div>
+      </div>
+      <figure class="phase-figure reveal">
+        <div class="phase-image"><img src="${p.img}" alt="${p.imgAlt}" loading="lazy"></div>
+        <figcaption class="phase-caption">Fig. ${p.idx} — ${p.imgAlt}.<br><b>${p.credit}</b></figcaption>
+      </figure>
+      <div class="phase-main">
+        <h2 class="reveal">${p.name}</h2>
+        <p class="phase-medium reveal">${p.medium}</p>
+        <p class="phase-lede reveal">${p.lede}</p>
+        <div class="marco reveal">
+          <span class="marco-label">Nota clínica</span>
+          <p>${p.marco}</p>
+        </div>
+      </div>
+    </div>
+  `;
+  container.appendChild(section);
+
+  const dot = document.createElement('button');
+  dot.className = 'nav-dot';
+  dot.dataset.label = `${p.idx} — ${p.range}`;
+  dot.setAttribute('aria-label', `Ir para ${p.name}`);
+  dot.addEventListener('click', () => section.scrollIntoView({behavior:'smooth'}));
+  navDots.appendChild(dot);
+});
+
+/* ---- scroll reveal ---- */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); } });
+}, { threshold: 0.18 });
+revealEls.forEach((el, i) => { el.style.transitionDelay = (i % 5) * 0.06 + 's'; io.observe(el); });
+
+/* ---- scrollspy nav dots + progress bar ---- */
+const dots = document.querySelectorAll('.nav-dot');
+const sections = document.querySelectorAll('.phase');
+const progressLine = document.getElementById('progressLine');
+
+function onScroll(){
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  progressLine.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+
+  let activeIndex = 0;
+  sections.forEach((s, i) => {
+    const rect = s.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.5) activeIndex = i;
+  });
+  dots.forEach((d,i) => d.classList.toggle('active', i === activeIndex));
+}
+window.addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+
+/* ---- back to top ---- */
+document.getElementById('backTop').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+/* ---- custom cursor ---- */
+const cursorDot = document.getElementById('cursorDot');
+if(window.matchMedia('(pointer:fine)').matches){
+  window.addEventListener('mousemove', (e) => {
+    cursorDot.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
+  });
+  document.querySelectorAll('a, button, .phase').forEach(el => {
+    el.addEventListener('mouseenter', () => cursorDot.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursorDot.classList.remove('hover'));
+  });
+}
+</script>
+
+</body>
+</html>
